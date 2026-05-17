@@ -1,23 +1,39 @@
 #!/bin/bash
 
-# エラーが発生したら処理を中断する
+# エラーが発生したら即座にスクリプトを終了させる設定
 set -e
 
-# コンパイラとオプションの設定
-CC=gcc
-CFLAGS="-Wall -Wextra -O2"
+# ユーザー名と対象ファイルの設定
+USER_NAME="asahi"
+SOURCE_FILE="main.c"
+OUTPUT_EXE="program"
 
-# 実行ファイル名とソースファイル名の指定
-TARGET="myapp"
-SOURCE="main.c"
+# 1. デスクトップディレクトリへ移動
+TARGET_DIR="/c/Users/${USER_NAME}/Desktop"
+cd "${TARGET_DIR}"
 
-echo "Building $SOURCE with $CC..."
+echo "========================================"
+echo "[INFO] ビルドを開始します..."
+echo "[Target] ${TARGET_DIR}/${SOURCE_FILE}"
+echo "========================================"
 
-# コンパイルの実行
-$CC $CFLAGS -o $TARGET $SOURCE
+# 2. ソースファイルの存在確認
+if [ ! -f "${SOURCE_FILE}" ]; then
+    echo "[ERROR] ${SOURCE_FILE} がデスクトップに見つかりません。"
+    exit 1
+fi
 
-echo "Build successful! Running $TARGET:"
+# 3. GCCによるコンパイルを実行（コンソール非表示オプション付き）
+# -Wall    : 全ての警告を表示
+# -mwindows: コンソールウィンドウを非表示にする
+gcc -Wall "${SOURCE_FILE}" -o "${OUTPUT_EXE}" -mwindows
+
+echo "[SUCCESS] ビルドが正常に完了しました: ${OUTPUT_EXE}.exe"
 echo "----------------------------------------"
+echo "[INFO] 実行ファイルを実行します..."
 
-# 成果物の実行
-./$TARGET
+# 4. 生成された実行ファイルの起動
+./${OUTPUT_EXE}.exe
+
+echo "[INFO] 終了しました。"
+echo "========================================"
